@@ -15,10 +15,9 @@ class DishMenuScrapy():
     def collectDishes(self, index_id):
         baseUrl = "https://cn.investing.com/equities/StocksFilter?noconstruct=1&smlID=800&sid=&tabletype=price&index_id="+index_id
         # baseUrl = "https://cn.investing.com/equities/StocksFilter?noconstruct=1&smlID=800&sid=&tabletype=price&index_id=all"
-        print("baseUrl= "+baseUrl)
+        print("dishUrl= "+baseUrl)
         service = ScrapyService();
         response = service.callGetRequst(baseUrl, "")
-        # print(response.text)
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         trs_element = soup.select('#cross_rate_markets_stocks_1')[0].select('tr[id*="pair_"]')
 
@@ -30,18 +29,22 @@ class DishMenuScrapy():
 
         for tr in trs_element:
         # if tr is not None:
-            print(tr)
+
             pair_id = tr.get('id')
             href = tr.select('a[href]')[0].get('href')
             title = tr.select('a[href]')[0].get('title')
             dish = self.collectDishBasic(pair_id, href, title)
 
-            backendService.saveDishItem(dish)
+
+            #call backend to save
+            # backendService.saveDishItem(dish)
+
+
 
 
 
     def collectDishBasic(self, pair_id, href, title):
-        # href = "/equities/el-paso-cor"
+        # href = "/equities/celesio-mu-historical-data"
 
         # / equities / el - paso - cor
         basic_url = "https://cn.investing.com"+href
@@ -56,7 +59,11 @@ class DishMenuScrapy():
         basic_soup = bs4.BeautifulSoup(basic_response.text, "html.parser")
 
         scripts_elements = basic_soup.findAll("script", {"type": "application/ld+json"});
-        print(scripts_elements[0].text)
+
+
+        if len(scripts_elements) == 0:
+            return
+
         script_json = json.loads(scripts_elements[0].text)
         dish.setTicker(script_json["tickersymbol"])
         # dish.setCompany(script_json["legalname"])
@@ -65,7 +72,7 @@ class DishMenuScrapy():
 
         dish_select_element = basic_soup.select('#DropDownContainer')[0].select('#DropdownBtn')[0].select('.btnTextDropDwn')[0]
 
-        print(dish_select_element.text)
+
         dish.setCategory(dish_select_element.text)
 
 
@@ -75,17 +82,64 @@ class DishMenuScrapy():
 
 
 
+        self.collectHistoryDish(basic_soup.select('#pairSublinksLevel2')[0].findAll("li"), pair_id ,dish.ticker)
+
+
+
         for basic_ele in basic_elements:
             basic_attr = basic_ele.select('.float_lang_base_1')[0].text
             basic_value = basic_ele.select('.float_lang_base_2')[0].text
-            print(basic_attr+":"+basic_value)
+            # print(basic_attr+":"+basic_value)
             self.setDishBasicInfo(dish, basic_attr, basic_value)
 
-
-
-
-        print(dish.toJson())
+        # print(dish.toJson())
         return dish
+
+    def collectHistoryDish(self, historyLIs,  pair_id, ticker):
+        # print(historyLIs)
+        for li in historyLIs:
+
+            if li.find('a') is not None and li.find('a').text == '历史数据':
+                history_href = li.find('a').get('href')
+                print(li.find('a').get('href'))
+        historical_url = 'https://cn.investing.com'+history_href
+
+        print(historical_url)
+        json_o = self.findSmlId(historical_url)
+        pairId = json_o['pairId']
+        smlId = json_o['smlId']
+        print(str(pairId)+" : "+str(smlId))
+        service = ScrapyService()
+        dish_price_list = service.getDishItemHistoryService(ticker,pairId, smlId)
+
+        miracleService = MiracleService()
+
+        miracleService.saveDishPriceHistory(dish_price_list)
+
+
+        # print(basic_response.text)
+
+
+
+
+        basic_url = "https://cn.investing.com/instruments/HistoricalDataAjax"
+        service = ScrapyService();
+        basic_response = service.callPostRequst(basic_url, "")
+
+
+    def findSmlId(self, historical_url):
+        service = ScrapyService();
+        historical_response = service.callGetRequst(historical_url, "")
+        historical_soup = bs4.BeautifulSoup(historical_response.text, "html.parser")
+        for script in historical_soup.find_all('script'):
+            if script.text.find('window.histDataExcessInfo')>0:
+                json_string = script.text[script.text.find('=')+1:].strip().replace('pairId', '"pairId"').replace('smlId', '"smlId"')
+
+                return json.loads(json_string)
+
+
+
+
 
     def setDishBasicInfo(self, dish, basic_attr, basic_value):
         if basic_attr == '营收':

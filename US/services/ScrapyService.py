@@ -1,17 +1,61 @@
 import requests
 import urllib3
+import json
+import bs4
+from US.models.DishPrice import DishPrice
 
 class ScrapyService():
     def callGetRequst(self, requestUrl, queryParams):
-
-
         detail_response = requests.get(requestUrl, headers=self.generateRequestHeader(requestUrl), stream=True, timeout=30000, verify=False)
-
-
-        # print(detail_response)
-        # print("====="+detail_response.text)
         return detail_response;
 
+    def callPostRequst(self, requestUrl, payload):
+        detail_response = requests.post(requestUrl, headers=self.generateRequestHeader(requestUrl), data=payload)
+        return detail_response
+
+
+    def getDishItemHistoryService(self, ticker, pair_id, sml_id ):
+        payload = {
+            "curr_id": pair_id,
+            "smlID": sml_id,
+            "header": "DOW历史数据",
+            "st_date": "2020/01/01",
+            "end_date": "2021/01/24",
+            "interval_sec": "Daily",
+            "sort_col": "date",
+            "sort_ord": "DESC",
+            "action": "historical_data"
+        }
+        basic_url = "https://cn.investing.com/instruments/HistoricalDataAjax"
+        response = self.callPostRequst(basic_url, payload)
+        soup = bs4.BeautifulSoup(response.text, "html.parser")
+        table_element = soup.select('#curr_table')[0]
+
+        tr_elements = table_element.find('tbody').findAll('tr')
+        dish_price_list = []
+        for tr in tr_elements:
+            dish_price = self.packDishPriceFromTR(ticker, tr)
+            if dish_price is not None:
+                dish_price_list.append(dish_price.toJson())
+
+        return dish_price_list
+
+    def packDishPriceFromTR(self, ticker, tr):
+        dish_price = DishPrice()
+        dish_price.setTicker(ticker)
+        tds = tr.findAll('td')
+        if len(tds) != 7:
+            return None
+        dish_price.setDate(tds[0].text)
+        dish_price.setClose(tds[1].attrs['data-real-value'])
+        dish_price.setOpen(tds[2].attrs['data-real-value'])
+        dish_price.setHigh(tds[3].attrs['data-real-value'])
+        dish_price.setLow(tds[4].attrs['data-real-value'])
+        dish_price.setVolume(tds[5].attrs['data-real-value'])
+        dish_price.setRange(tds[6].text)
+
+
+        return dish_price
 
 
     def generateRequestHeader(self, requestUrl):
@@ -19,6 +63,7 @@ class ScrapyService():
             "Host": "cn.investing.com",
             "Connection": "keep-alive",
             "Accept": "*/*",
+            "Content-Type": "application/x-www-form-urlencoded",
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36",
             "X-Requested-With": "XMLHttpRequest",
             "Sec-Fetch-Dest": "empty",

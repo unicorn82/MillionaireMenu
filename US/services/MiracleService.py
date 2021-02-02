@@ -15,10 +15,7 @@ class MiracleService():
         pastebin_url = r.text
         print("The pastebin URL is:%s" % pastebin_url)
 
-    def saveDishItem(self, dish):
-        service = "stock/save"
-        payload = dish.toJson()
-        self.callPostRequest(service, payload)
+
 
     def generateRequestHeader(self):
         headers = {
@@ -28,6 +25,17 @@ class MiracleService():
 
         }
         return headers
+
+    def saveDishItem(self, dish):
+        service = "stock/save"
+        payload = dish.toJson()
+        self.callPostRequest(service, payload)
+
+    def saveDishPriceHistory(self, dish_price_list):
+        service = "stock/price/save"
+        payload = dish_price_list
+        self.callPostRequest(service, payload)
+        return
 
 
 
