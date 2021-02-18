@@ -2,6 +2,7 @@ import requests
 import urllib3
 import json
 import bs4
+import datetime
 from US.models.DishPrice import DishPrice
 
 class ScrapyService():
@@ -15,12 +16,15 @@ class ScrapyService():
 
 
     def getDishItemHistoryService(self, ticker, pair_id, sml_id ):
+        now = datetime.datetime.now()
+        print("Current date and time : ")
+        print(now.strftime("%Y/%m/%d"))
         payload = {
             "curr_id": pair_id,
             "smlID": sml_id,
             "header": "DOW历史数据",
             "st_date": "2020/01/01",
-            "end_date": "2021/01/24",
+            "end_date": now.strftime("%Y/%m/%d"),
             "interval_sec": "Daily",
             "sort_col": "date",
             "sort_ord": "DESC",
@@ -36,6 +40,7 @@ class ScrapyService():
         for tr in tr_elements:
             dish_price = self.packDishPriceFromTR(ticker, tr)
             if dish_price is not None:
+                print(dish_price.toJson())
                 dish_price_list.append(dish_price.toJson())
 
         return dish_price_list

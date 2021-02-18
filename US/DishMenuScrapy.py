@@ -64,7 +64,7 @@ class DishMenuScrapy():
         if len(scripts_elements) == 0:
             return
 
-        script_json = json.loads(scripts_elements[0].text)
+        script_json = json.loads(scripts_elements[0].string)
         dish.setTicker(script_json["tickersymbol"])
         # dish.setCompany(script_json["legalname"])
 
@@ -132,9 +132,13 @@ class DishMenuScrapy():
         historical_response = service.callGetRequst(historical_url, "")
         historical_soup = bs4.BeautifulSoup(historical_response.text, "html.parser")
         for script in historical_soup.find_all('script'):
-            if script.text.find('window.histDataExcessInfo')>0:
-                json_string = script.text[script.text.find('=')+1:].strip().replace('pairId', '"pairId"').replace('smlId', '"smlId"')
-
+            
+            
+            if script.prettify().find('window.histDataExcessInfo')>0:
+                print(script.prettify())
+                json_string = script.prettify().replace('<script>','').replace('</script>','')
+                json_string = json_string[json_string.find('=')+1:].strip().replace('pairId', '"pairId"').replace('smlId', '"smlId"')
+                print(json_string)
                 return json.loads(json_string)
 
 

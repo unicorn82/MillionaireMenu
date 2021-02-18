@@ -19,9 +19,9 @@ class MathUtil():
         text = text.replace(',', '').replace(' ','')
         if text[-1] in d:
             num, magnitude = text[:-1], text[-1]
-            return int(Decimal(str(num)) * 10 ** d[magnitude])
+            return float(str(num)) * 10 ** d[magnitude]
         else:
-            return int(Decimal(text))
+            return float(text)
 
     # @staticmethod
     # def text_remove_comma(text):
@@ -31,7 +31,7 @@ class MathUtil():
     @staticmethod
     def p2f(text):
         if text != "N/A":
-            return float(text.replace(" ","").strip('%')) / 100
+            return float(text.replace(',', '').replace(" ","").strip('%')) / 100
         else:
             return -1.0
 
