@@ -23,7 +23,7 @@ class ScrapyService():
             "curr_id": pair_id,
             "smlID": sml_id,
             "header": "DOW历史数据",
-            "st_date": "2020/01/01",
+            "st_date": "2020/10/01",
             "end_date": now.strftime("%Y/%m/%d"),
             "interval_sec": "Daily",
             "sort_col": "date",

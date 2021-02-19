@@ -2,7 +2,9 @@
 import requests
 
 # defining the api-endpoint
-MIRACLE_API_ENDPOINT = "http://localhost:8080/service/"
+MIRACLE_API_ENDPOINT = "http://pp-cacl-data.flatironssolutions.com:8080/service/"
+
+# MIRACLE_API_ENDPOINT = "http://localhost:8080/service/"
 
 class MiracleService():
 
