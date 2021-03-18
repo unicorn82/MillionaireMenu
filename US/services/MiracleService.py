@@ -2,9 +2,9 @@
 import requests
 
 # defining the api-endpoint
-MIRACLE_API_ENDPOINT = "http://pp-cacl-data.flatironssolutions.com:8080/service/"
+# MIRACLE_API_ENDPOINT = "http://pp-cacl-data.flatironssolutions.com:8080/service/"
 
-# MIRACLE_API_ENDPOINT = "http://localhost:8080/service/"
+MIRACLE_API_ENDPOINT = "http://localhost:8080/service/"
 
 class MiracleService():
 
@@ -36,6 +36,18 @@ class MiracleService():
     def saveDishPriceHistory(self, dish_price_list):
         service = "stock/price/save"
         payload = dish_price_list
+        self.callPostRequest(service, payload)
+        return
+
+    def saveIndexItem(self, index):
+        service = "index/save"
+        payload = index.toJson()
+        print(payload)
+        self.callPostRequest(service, payload)
+
+    def saveIndexPriceHistory(self, index_price_list):
+        service = "index/price/save"
+        payload = index_price_list
         self.callPostRequest(service, payload)
         return
 

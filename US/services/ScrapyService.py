@@ -15,15 +15,19 @@ class ScrapyService():
         return detail_response
 
 
-    def getDishItemHistoryService(self, ticker, pair_id, sml_id ):
+
+    def callDishItemHistoryService(self,  pair_id, sml_id, start_date ):
         now = datetime.datetime.now()
         print("Current date and time : ")
         print(now.strftime("%Y/%m/%d"))
+        if start_date is None:
+            start_date = "2020/10/01"
+
         payload = {
             "curr_id": pair_id,
             "smlID": sml_id,
             "header": "DOW历史数据",
-            "st_date": "2020/10/01",
+            "st_date": start_date,
             "end_date": now.strftime("%Y/%m/%d"),
             "interval_sec": "Daily",
             "sort_col": "date",
@@ -32,6 +36,11 @@ class ScrapyService():
         }
         basic_url = "https://cn.investing.com/instruments/HistoricalDataAjax"
         response = self.callPostRequst(basic_url, payload)
+        return response
+
+
+    def getDishItemHistoryService(self, ticker, pair_id, sml_id, start_date ):
+        response = self.callDishItemHistoryService(pair_id, sml_id, start_date)
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         table_element = soup.select('#curr_table')[0]
 
@@ -39,8 +48,9 @@ class ScrapyService():
         dish_price_list = []
         for tr in tr_elements:
             dish_price = self.packDishPriceFromTR(ticker, tr)
+
             if dish_price is not None:
-                print(dish_price.toJson())
+                # print(dish_price.toJson())
                 dish_price_list.append(dish_price.toJson())
 
         return dish_price_list
