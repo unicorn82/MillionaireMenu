@@ -48,6 +48,8 @@ class DishMenuScrapy():
 
         # / equities / el - paso - cor
         basic_url = "https://cn.investing.com"+href
+
+        basic_url = "https://cn.investing.com/equities/boeing-co"
         print("basic_url = " + basic_url)
 
         dish = Dish()
@@ -55,7 +57,7 @@ class DishMenuScrapy():
         dish.setCompany(href.replace("/equities/", ""))
         service = ScrapyService();
         basic_response = service.callGetRequst(basic_url, "")
-        # print(basic_response.text)
+        print(basic_response.text)
         basic_soup = bs4.BeautifulSoup(basic_response.text, "html.parser")
 
         scripts_elements = basic_soup.findAll("script", {"type": "application/ld+json"});
@@ -68,12 +70,12 @@ class DishMenuScrapy():
         dish.setTicker(script_json["tickersymbol"])
         # dish.setCompany(script_json["legalname"])
 
+        # print(basic_soup.find("button", {"data-testid": "button-parent"}).find("span"))
+
+        # dish_select_element = basic_soup.select('#DropDownContainer')[0].select('#DropdownBtn')[0].select('.btnTextDropDwn')[0]
 
 
-        dish_select_element = basic_soup.select('#DropDownContainer')[0].select('#DropdownBtn')[0].select('.btnTextDropDwn')[0]
-
-
-        dish.setCategory(dish_select_element.text)
+        # dish.setCategory(dish_select_element.text)
 
 
         overview_element = basic_soup.select('.overviewDataTable')[0]

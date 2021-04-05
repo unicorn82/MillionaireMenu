@@ -16,7 +16,7 @@ class MathUtil():
             'B': 9,
             'T': 12
         }
-        text = text.replace(',', '').replace(' ','')
+        text = text.replace(',', '').replace(' ','').replace('$','')
         if text[-1] in d:
             num, magnitude = text[:-1], text[-1]
             return float(str(num)) * 10 ** d[magnitude]
@@ -31,7 +31,7 @@ class MathUtil():
     @staticmethod
     def p2f(text):
         if text != "N/A":
-            return float(text.replace(',', '').replace(" ","").strip('%')) / 100
+            return float(text.replace(',', '').replace(" ","").replace('$','').strip('%')) / 100
         else:
             return -1.0
 

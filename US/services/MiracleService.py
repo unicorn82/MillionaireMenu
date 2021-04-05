@@ -33,8 +33,8 @@ class MiracleService():
         payload = dish.toJson()
         self.callPostRequest(service, payload)
 
-    def saveDishPriceHistory(self, dish_price_list):
-        service = "stock/price/save"
+    def saveDishPriceHistory(self, ticker, dish_price_list):
+        service = "stock/price/"+ticker+"/save"
         payload = dish_price_list
         self.callPostRequest(service, payload)
         return

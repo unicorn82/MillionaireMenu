@@ -18,11 +18,11 @@ class Dish:
             self.__category = value
 
     @property
-    def company(self):
-        return self.__company
+    def sector(self):
+        return self.__sector
 
-    def setCompany(self, value):
-        self.__company = value
+    def setSector(self, value):
+        self.__sector = value
 
     @property
     def companyName(self):
@@ -32,31 +32,21 @@ class Dish:
         self.__companyName = value
 
     @property
-    def avg3mVolumn(self):
-        return self.__avg3mVolumn
+    def industry(self):
+        return self.__industry
 
-    def setAvg3mVolumn(self, value):
-        if value != "N/A":
-            self.__avg3mVolumn = MathUtil.text_to_num(value)
-        else:
-            self.__avg3mVolumn = -1.0
+    def setIndustry(self, value):
+        self.__industry = value
 
     @property
-    def yearRange(self):
-        return self.__yearRange
+    def oneYrTarget(self):
+        return self.__oneYrTarget
 
-    def setYearRange(self, value):
-        if value != "N/A":
-            self.__yearRange = MathUtil.p2f(value)
-        else:
-            self.__yearRange = -1.0
+    def setOneYrTarget(self, value):
+        if value != 'N/A':
+            self.__oneYrTarget = float(MathUtil.text_to_num(value))
 
-    @property
-    def w52Range(self):
-        return self.__w52Range
 
-    def setW52Range(self, value):
-        self.__w52Range = value
 
     @property
     def marketCap(self):
@@ -79,14 +69,12 @@ class Dish:
             self.__PE = -1.0
 
     @property
-    def cirMarketCap(self):
-        return self.__cirMarketCap
+    def forwardPE1Yr(self):
+        return self.__forwardPE1Yr
+    def setForwardPE1Yr(self, value):
+        self.__forwardPE1Yr = value
 
-    def setCirMarketCap(self, value):
-        if value != "N/A":
-            self.__cirMarketCap = MathUtil.text_to_num(value)
-        else:
-            self.__cirMarketCap = -1
+
 
     @property
     def earning(self):
@@ -104,7 +92,7 @@ class Dish:
 
     def setEPS(self, value):
         if value != "N/A":
-            self.__EPS = value
+            self.__EPS = float(MathUtil.text_to_num(value))
         else:
             self.__EPS = -1
 
@@ -114,20 +102,35 @@ class Dish:
 
     def setDividend(self, value):
         if value.find('N/A') < 0:
+            self.__dividend = value
 
-            self.__dividend = (float(value.split("(")[0]))
-            self.__yield = MathUtil.p2f(value.split("(")[1].split(")")[0])
+            # self.__dividend = (float(value.split("(")[0]))
+            # self.__yield = MathUtil.p2f(value.split("(")[1].split(")")[0])
         # self.__dividend = value
+
+    @property
+    def dividend(self):
+        return self.__dividend
+
+    def setDividend(self, value):
+        if value.find('N/A') < 0:
+            self.__dividend = MathUtil.text_to_num(value)
+
+
+    @property
+    def getYield(self):
+        return self.__yield
+
+    def setYield(self, value):
+        if value.find('N/A') < 0:
+            self.__yield = MathUtil.p2f(value)
 
     @property
     def beta(self):
         return self.__beta
 
     def setBeta(self, value):
-        if value != "N/A":
-            self.__beta = float(value.replace(' ',''))
-        else:
-            self.__beta = -1
+        self.__beta = value
 
     @property
     def nextReportDate(self):
@@ -136,19 +139,28 @@ class Dish:
     def setNextReportDate(self, value):
         self.__nextReportDate = value.replace('年','-').replace('月', '-').replace('日', '')
 
+    @property
+    def url(self):
+        return self.__url
+
+    def setUrl(self, value):
+            self.__url = value
+
+
+
 
 
     def __init__(self):
         self.__ticker = ''
         self.__category = ''
-        self.__company = ''
+        self.__sector = ''
         self.__companyName = ''
-        self.__avg3mVolumn = 0
-        self.__yearRange = 0.0
-        self.__w52Range = 0.0
+        self.__industry = ''
+        self.__oneYrTarget = ''
         self.__marketCap = 0
         self.__PE = 0.0
-        self.__cirMarketCap = 0  # circulation market
+        self.__forwardPE1Yr = 0.0
+
         self.__earning = 0
         self.__EPS = 0.0 #
         self.__forwardDividend = 0.0
@@ -156,6 +168,7 @@ class Dish:
         self.__beta = 0.0
         self.__nextReportDate = ''
         self.__dividend = 0.0
+        self.__url = ''
 
     # def fromJson(self, json):
     #     return
@@ -165,19 +178,21 @@ class Dish:
         json = {}
         json['ticker'] = self.__ticker
         json['category'] = self.__category
-        json['company'] = self.__company
+        json['sector'] = self.__sector
         json['companyName'] = self.__companyName
-        json['avg3mVolumn'] = self.__avg3mVolumn
-        json['yearRange'] = self.__yearRange
-        json['w52Range'] = self.__w52Range
+        json['industry'] = self.__industry
+        json['oneYrTarget'] = self.__oneYrTarget
+        json['forwardPE1Yr'] = self.__forwardPE1Yr
+
         json['marketCap'] = self.__marketCap
         json['PE'] = self.__PE
         json['EPS'] = self.__EPS
-        json['cirMarketCap'] = self.__cirMarketCap
+
         json['earning'] = self.__earning
         json['dividend'] = self.__dividend
         json['yield'] = self.__yield
         json['beta'] = self.__beta
         json['nextReportDate'] = self.__nextReportDate
+        json['url'] = self.__url
 
         return json

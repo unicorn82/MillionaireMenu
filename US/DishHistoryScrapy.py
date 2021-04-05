@@ -1,6 +1,7 @@
 from US.services.ScrapyService import ScrapyService
 from US.services.MiracleService import MiracleService
 from US.models.Index import Index
+import traceback
 
 class DishHistoryScrapy():
     def __init__(self):

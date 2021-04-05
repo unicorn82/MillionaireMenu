@@ -1,5 +1,6 @@
 from US.DishMenuScrapy import DishMenuScrapy
 from US.DishHistoryScrapy import DishHistoryScrapy
+from US.StockMenuScrapy import StockMenuScrapy
 from decimal import Decimal
 from US.utils.MathUtil import MathUtil
 import sys
@@ -11,13 +12,13 @@ def main():
     # dish = DishMenuScrapy();
     # dish.run()
 
-    print(sys.argv[1])
-    if sys.argv[1] == "history":
+
+    if len(sys.argv) >1 and sys.argv[1] == "history":
         history = DishHistoryScrapy()
         history.run()
     else:
-        dish = DishMenuScrapy();
-        dish.run()
+        dish = StockMenuScrapy()
+        dish.run(bool(False))
 
 
 
