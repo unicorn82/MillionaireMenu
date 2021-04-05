@@ -126,7 +126,7 @@ class StockMenuScrapy():
                 dish_price.setHigh(row['high'])
                 dish_price.setLow(row['low'])
                 dish_price.setVolume(row['volume'])
-                dish_prices.append(dish_price)
+                dish_prices.append(dish_price.toJson())
 
 
 
