@@ -149,6 +149,7 @@ class StockMenuScrapy():
 
 
     def run(self, isHistory):
-        self.collectAllUSDishes();
         self.isHistory = isHistory
+        self.collectAllUSDishes();
+
         print('Collecting dish list ...\n')
