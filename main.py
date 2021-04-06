@@ -15,8 +15,12 @@ def main():
 
     if len(sys.argv) >1 and sys.argv[1] == "history":
         history = DishHistoryScrapy()
-        history.run()
+        history.run(True)
+        dish = StockMenuScrapy()
+        dish.run(bool(True))
     else:
+        history = DishHistoryScrapy()
+        history.run(False)
         dish = StockMenuScrapy()
         dish.run(bool(False))
 

@@ -12,6 +12,7 @@ class MiracleService():
         # sending post request and saving response as response object
         print("Send post request "+MIRACLE_API_ENDPOINT+service)
         r = requests.post(url=MIRACLE_API_ENDPOINT+service, json=payload, headers=self.generateRequestHeader())
+
         print(r.status_code)
         # extracting response text
         pastebin_url = r.text
@@ -31,11 +32,13 @@ class MiracleService():
     def saveDishItem(self, dish):
         service = "stock/save"
         payload = dish.toJson()
+        print(payload)
         self.callPostRequest(service, payload)
 
     def saveDishPriceHistory(self, ticker, dish_price_list):
         service = "stock/price/"+ticker+"/save"
         payload = dish_price_list
+        print(payload)
         self.callPostRequest(service, payload)
         return
 

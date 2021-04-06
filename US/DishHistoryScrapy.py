@@ -2,11 +2,12 @@ from US.services.ScrapyService import ScrapyService
 from US.services.MiracleService import MiracleService
 from US.models.Index import Index
 import traceback
+import datetime
 
 class DishHistoryScrapy():
     def __init__(self):
         print('Collecting dish history ...\n')
-
+        self.isHistory = False
         self.dishes = [
             {"ticker": "DJI","curr_id": "169", "smlID": "2030170", "description": "道琼斯工业平均指数"}, #道琼斯工业平均指数
             {"ticker": "HSI","curr_id": "179", "smlID": "2030179", "description": "恒生指数"}, #恒生指数
@@ -22,11 +23,18 @@ class DishHistoryScrapy():
 
 
         ]
+
         self.st_date = "2007/01/01"
-        self.end_date = "2021/03/07"
+
+
+
+
 
 
     def collectIndexHistory(self, obj):
+        now = datetime.datetime.now()
+        if not self.isHistory:
+            self.st_date = now.strftime("%Y/01/01")
         post_url = "https://cn.investing.com/instruments/HistoricalDataAjax"
         service = ScrapyService()
 
@@ -55,7 +63,8 @@ class DishHistoryScrapy():
 
 
 
-    def run(self):
+    def run(self, isHistory):
+        self.isHistory = isHistory
         for obj in self.dishes:
             print(obj["curr_id"]+" "+obj["smlID"])
 
