@@ -10,6 +10,7 @@ class MathUtil():
 
     @staticmethod
     def text_to_num(text):
+
         d = {
             'K': 3,
             'M': 6,

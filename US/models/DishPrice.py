@@ -14,7 +14,8 @@ class DishPrice:
         return self.__date
 
     def setDate(self, value):
-        self.__date = value.replace('年','-').replace('月', '-').replace('日', '')
+        self.__date = value
+        # self.__date = value.replace('年','-').replace('月', '-').replace('日', '')
 
     @property
     def open(self):
@@ -45,7 +46,8 @@ class DishPrice:
         return self.__volume
 
     def setVolume(self, value):
-        self.__volume = MathUtil.text_to_num(value)
+        if value != '-':
+            self.__volume = MathUtil.text_to_num(value)
 
     @property
     def range(self):
