@@ -3,6 +3,7 @@ from US.DishHistoryScrapy import DishHistoryScrapy
 from US.StockMenuScrapy import StockMenuScrapy
 from decimal import Decimal
 from US.utils.MathUtil import MathUtil
+from US.SectionMenuScrapy import SectionMenuScrapy
 import sys
 import re
 
@@ -19,8 +20,8 @@ def main():
         dish = StockMenuScrapy()
         dish.run(bool(True))
     else:
-        history = DishHistoryScrapy()
-        history.run(False)
+        section = SectionMenuScrapy()
+        section.run(False)
         dish = StockMenuScrapy()
         dish.run(bool(False))
 

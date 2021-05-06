@@ -54,6 +54,12 @@ class MiracleService():
         self.callPostRequest(service, payload)
         return
 
+    def saveTickerIndexPriceHistory(self, ticker, index_price_list):
+        service = "index/price/"+ticker+"/save"
+        payload = index_price_list
+        sefl.callPostRequest(service, payload)
+        return
+
 
 
 

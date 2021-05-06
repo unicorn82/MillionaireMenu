@@ -80,7 +80,7 @@ class SectionMenuScrapy():
             print(indexObject["url"])
             ticker = indexObject["ticker"]
             response = self.scrapyService.callGetRequst(indexObject["url"], "")
-            # print(response.text)
+  
             soup = bs4.BeautifulSoup(response.text, "html.parser")
             if soup.select('#curr_table') is not None:
                 table_element = soup.select('#curr_table')[0]

@@ -86,7 +86,7 @@ class StockMenuScrapy():
     def packDishPrice(self, ticker):
         now = datetime.datetime.now()
         fromdate = now.strftime("%Y-01-01")
-        limit = 20
+        limit = 100
         offset = 0
         dish_prices = []
         if self.isHistory:
@@ -99,6 +99,10 @@ class StockMenuScrapy():
         init_response = self.callGetRequst(price_url)
         total_record = init_response.json()['data']['totalRecords']
         offset = total_record - limit
+        if total_record < limit: 
+            offset = 0
+        
+       
         while(not offset < 0):
             print(price_url+'&offset='+str(offset))
             offset_response = self.callGetRequst(price_url+'&offset='+str(offset))
@@ -117,6 +121,7 @@ class StockMenuScrapy():
     def packOffsetDishPrice(self, ticker, offset_response, dish_prices):
         if offset_response['data'] is not None:
             rows = offset_response['data']['tradesTable']['rows']
+
             for row in rows[::-1]:
                 dish_price = DishPrice()
                 dish_price.setTicker(ticker)
@@ -153,3 +158,4 @@ class StockMenuScrapy():
         self.collectAllUSDishes();
 
         print('Collecting dish list ...\n')
+
