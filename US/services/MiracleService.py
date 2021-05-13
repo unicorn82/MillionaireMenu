@@ -39,29 +39,29 @@ class MiracleService():
         service = "stock/save"
         payload = dish.toJson()
         self.logger.info(payload)
-        # self.callPostRequest(service, payload)
+        self.callPostRequest(service, payload)
 
     def saveDishPriceHistory(self, ticker, dish_price_list):
         service = "stock/price/"+ticker+"/save"
         payload = dish_price_list
-        # self.callPostRequest(service, payload)
+        self.callPostRequest(service, payload)
         return
 
     def saveIndexItem(self, index):
         service = "index/save"
         payload = index.toJson()
-        # self.callPostRequest(service, payload)
+        self.callPostRequest(service, payload)
 
     def saveIndexPriceHistory(self, index_price_list):
         service = "index/price/save"
         payload = index_price_list
-        # self.callPostRequest(service, payload)
+        self.callPostRequest(service, payload)
         return
 
     def saveTickerIndexPriceHistory(self, ticker, index_price_list):
         service = "index/price/"+ticker+"/save"
         payload = index_price_list
-        # self.callPostRequest(service, payload)
+        self.callPostRequest(service, payload)
         return
 
 
