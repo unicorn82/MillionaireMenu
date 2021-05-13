@@ -7,13 +7,16 @@ import datetime
 from US.models.Dish import Dish
 from US.models.DishPrice import DishPrice
 from US.services.MiracleService import MiracleService
+from utils.logging import logHelper
 
 class StockMenuScrapy():
     def __init__(self):
         print('Collecting dish menu ...\n')
+        self.module = 'scrapy'
         self.dishes = []
         self.isHistory = False
         self.miracleService = MiracleService()
+        self.logger = logHelper(self.module)
 
     def collectAllUSDishes(self):
         exchanges = ['NASDAQ', 'NYSE', 'AMEX']
@@ -22,7 +25,7 @@ class StockMenuScrapy():
         for ex in exchanges:
             while(True):
                 screener_url = 'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit='+str(limit)+'&offset='+str(offset)+'&exchange='+ex
-                print(screener_url)
+                self.logger.info(screener_url)
                 screener_response = self.callGetRequst(screener_url)
                 if self.packDishList(screener_response.json(), ex) == 0:
                     break
@@ -32,7 +35,7 @@ class StockMenuScrapy():
 
     def collectDishSummary(self, symbol):
         info_url = 'https://api.nasdaq.com/api/quote/'+symbol+'/summary?assetclass=stocks'
-        print(info_url)
+        self.logger.info(info_url)
         info_response = self.callGetRequst(info_url)
 
 
@@ -49,7 +52,7 @@ class StockMenuScrapy():
             dish = self.packDish(row)
 
             if dish != None:
-                print(dish.toJson())
+                self.logger.debug(dish.toJson())
                 self.dishes.append(dish)
 
                 self.miracleService.saveDishItem(dish)
@@ -57,7 +60,7 @@ class StockMenuScrapy():
 
             dish_prices = self.packDishPrice(ticker)
             self.miracleService.saveDishPriceHistory(ticker, dish_prices)
-            print(dish_prices)
+            self.logger.info(dish_prices)
         return len(rows)
 
     def packDish(self, row):
@@ -92,28 +95,31 @@ class StockMenuScrapy():
         if self.isHistory:
             fromdate = '2010-01-01'
         todate = now.strftime("%Y-%m-%d")
-        print(fromdate)
+        self.logger.debug(fromdate)
         price_url = 'https://api.nasdaq.com/api/quote/'+str(ticker)+'/historical?assetclass=stocks&'\
                     +'fromdate='+fromdate+'&todate='+todate+'&limit='+str(limit)
-        print(price_url)
+        self.logger.info(price_url)
         init_response = self.callGetRequst(price_url)
-        total_record = init_response.json()['data']['totalRecords']
-        offset = total_record - limit
-        if total_record < limit: 
-            offset = 0
+        try:
+            total_record = init_response.json()['data']['totalRecords']
+            offset = total_record - limit
+            if total_record < limit: 
+                offset = 0
         
        
-        while(not offset < 0):
-            print(price_url+'&offset='+str(offset))
-            offset_response = self.callGetRequst(price_url+'&offset='+str(offset))
-            self.packOffsetDishPrice(ticker, offset_response.json(), dish_prices)
-            if(offset > limit):
-                offset = offset - limit
-            else:
-                if offset > 0:
-                    offset = 0
+            while(not offset < 0):
+                self.logger.info(price_url+'&offset='+str(offset))
+                offset_response = self.callGetRequst(price_url+'&offset='+str(offset))
+                self.packOffsetDishPrice(ticker, offset_response.json(), dish_prices)
+                if(offset > limit):
+                    offset = offset - limit
                 else:
-                    offset = -1 #break the loop
+                    if offset > 0:
+                        offset = 0
+                    else:
+                        offset = -1 #break the loop
+        except:
+            self.logger.error("Got Error")
         return dish_prices
 
 
@@ -157,5 +163,5 @@ class StockMenuScrapy():
         self.isHistory = isHistory
         self.collectAllUSDishes();
 
-        print('Collecting dish list ...\n')
+        self.logger.info('Collecting dish list ...\n')
 

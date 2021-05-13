@@ -46,7 +46,7 @@ class DishPrice:
         return self.__volume
 
     def setVolume(self, value):
-        if value != '-':
+        if value != '-' and value != 'N/A':
             self.__volume = MathUtil.text_to_num(value)
 
     @property

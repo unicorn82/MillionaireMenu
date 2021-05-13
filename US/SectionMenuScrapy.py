@@ -9,6 +9,7 @@ from US.models.Index import Index
 from datetime import datetime
 from US.services.MiracleService import MiracleService
 from US.services.ScrapyService import ScrapyService
+from utils.logging import logHelper
 
 
 
@@ -33,6 +34,9 @@ class SectionMenuScrapy():
             {"ticker": "SZI", "url": "https://www.investing.com/indices/szse-component-historical-data"}
         ]
 
+        self.module = 'scrapy'
+        self.logger = logHelper(self.module)
+
 
 
 
@@ -49,7 +53,7 @@ class SectionMenuScrapy():
             indexModel.setTicker(ticker)
             indexModel.setDescription(description)
 
-            print(indexModel.toJson())
+            # self.logger.debug(indexModel.toJson())
             with open(self.workDirectory+'/'+file) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 line_count = 0
@@ -72,12 +76,12 @@ class SectionMenuScrapy():
             dishModel.setLow(row[4])
             dishModel.setVolume(row[5])
             dishModel.setRange(row[6])
-            print(dishModel.toJson())
+            self.logger.debug(dishModel.toJson())
         return dishModel
 
     def scrapyIndexHistory(self):
         for indexObject in self.dishes:
-            print(indexObject["url"])
+            self.logger.info(indexObject["url"])
             ticker = indexObject["ticker"]
             response = self.scrapyService.callGetRequst(indexObject["url"], "")
   
@@ -90,7 +94,7 @@ class SectionMenuScrapy():
                     dishModel = self.packDishPriceFromTr(tr, ticker)
                     if dishModel is not None:
                         dist_list.append(dishModel.toJson())
-                        print(dishModel.toJson())
+                        self.logger.debug(dishModel.toJson())
             self.miracleService.saveTickerIndexPriceHistory(ticker, dist_list)
 
 
@@ -126,6 +130,4 @@ class SectionMenuScrapy():
         else:
             self.scrapyIndexHistory()
 
-print("----------")
-section = SectionMenuScrapy()
-section.run(False)
+

@@ -34,4 +34,5 @@ def main():
     print('Millionaire Menu is done...\n')
 
 if __name__ == '__main__':
+    print("-----------------")
     main()
