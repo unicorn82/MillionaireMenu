@@ -20,9 +20,9 @@ class StockMenuScrapy():
 
     def collectAllUSDishes(self):
         exchanges = ['NASDAQ', 'NYSE', 'AMEX']
-        offset = 0
         limit = 100
         for ex in exchanges:
+            offset = 0
             while(True):
                 screener_url = 'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit='+str(limit)+'&offset='+str(offset)+'&exchange='+ex
                 self.logger.info(screener_url)
