@@ -72,7 +72,9 @@ class Dish:
     def forwardPE1Yr(self):
         return self.__forwardPE1Yr
     def setForwardPE1Yr(self, value):
-        self.__forwardPE1Yr = value
+        if value != 'N/A':
+            self.__forwardPE1Yr = float(MathUtil.text_to_num(value))
+
 
 
 
